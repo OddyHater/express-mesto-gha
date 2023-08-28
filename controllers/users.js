@@ -19,12 +19,9 @@ module.exports.findAllUsers = (req, res) => { // GET
 // eslint-disable-next-line consistent-return
 module.exports.findUserById = (req, res) => { // GET
   const { userId } = req.params;
-  if (!userId) {
-    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.');
-  }
   User.findById(userId)
     .then((user) => res.status(200).send({ data: user }))
-    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
+    .catch(() => sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -46,34 +43,29 @@ module.exports.createUser = (req, res) => { // POST
 // eslint-disable-next-line consistent-return
 module.exports.updateProfile = (req, res) => { // PATCH
   const { name, about } = req.body;
-  const { userId } = req.user._id;
   if (!name || !about) {
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при обновлении профиля.');
   }
-  if (!userId) {
-    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь с указанным _id не найден.');
-  }
-  User.findByIdAndUpdate(req.params.id, {
-    name,
-    about,
-  })
-    .then((user) => res.status(200).send({ data: user }))
+  User.findByIdAndUpdate(
+    req.params.id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
+    .then(() => res.status(200).send({ name, about }))
     .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.updateAvatar = (req, res) => { // PATCH
   const { avatar } = req.body;
-  const { userId } = req.user._id;
   if (!avatar) {
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при обновлении аватара.');
   }
-  if (!userId) {
-    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь с указанным _id не найден.');
-  }
-  User.findByIdAndUpdate(req.params.id, {
-    avatar,
-  })
-    .then((user) => res.status(200).send({ data: user }))
+  User.findByIdAndUpdate(
+    req.params.id,
+    { avatar },
+    { new: true, runValidators: true },
+  )
+    .then(() => res.status(200).send({ avatar }))
     .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
