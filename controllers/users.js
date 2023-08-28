@@ -22,7 +22,7 @@ module.exports.findUserById = (req, res) => { // GET
   }
   User.findById(userId)
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -33,7 +33,7 @@ module.exports.createUser = (req, res) => { // POST
   }
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -51,7 +51,7 @@ module.exports.updateProfile = (req, res) => { // PATCH
     about,
   })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при обновлении профиля'));
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -68,5 +68,5 @@ module.exports.updateAvatar = (req, res) => { // PATCH
     avatar,
   })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };

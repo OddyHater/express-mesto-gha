@@ -23,7 +23,7 @@ module.exports.createCard = (req, res) => { // POST
   }
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -38,7 +38,7 @@ module.exports.deleteCard = (req, res) => { // DELETE
   }
   Card.findByIdAndDelete(cardId)
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при удалении карточки'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -52,7 +52,7 @@ module.exports.likeCard = (req, res) => { // PUT
     { new: true },
   )
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: err }));
+    .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
 };
 
 // eslint-disable-next-line consistent-return
@@ -66,5 +66,5 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: err }));
+    .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
 };
