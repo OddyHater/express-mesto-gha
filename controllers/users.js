@@ -20,7 +20,12 @@ module.exports.findAllUsers = (req, res) => { // GET
 module.exports.findUserById = (req, res) => { // GET
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.');
+      }
+      res.status(200).send({ data: user });
+    })
     .catch(() => sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.'));
 };
 
