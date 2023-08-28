@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
         return v.length >= 2;
       },
       message: 'Name must contain at least 2 characters',
+      error: 400,
     },
   },
 
@@ -24,6 +25,7 @@ const userSchema = mongoose.Schema({
         return v.length >= 2;
       },
       message: 'about must contain at least 2 characters',
+      error: 400,
     },
   },
 

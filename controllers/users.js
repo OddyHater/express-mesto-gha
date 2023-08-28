@@ -11,7 +11,8 @@ function sendError(res, statusCode, message) {
 }
 
 module.exports.findAllUsers = () => { // GET
-  User.find({});
+  const users = User.find({});
+  return users;
 };
 
 // eslint-disable-next-line consistent-return

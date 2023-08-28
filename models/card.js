@@ -11,6 +11,7 @@ const cardSchema = mongoose.Schema({
         return v.length >= 2;
       },
       message: 'name must contain at least 2 characters',
+      error: 400,
     },
   },
 
