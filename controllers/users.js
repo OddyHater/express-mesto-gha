@@ -23,7 +23,7 @@ module.exports.findUserById = (req, res) => { // GET
     return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.');
   }
   User.findById(userId)
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
@@ -34,7 +34,7 @@ module.exports.createUser = (req, res) => { // POST
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
   }
   User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
@@ -57,7 +57,7 @@ module.exports.updateProfile = (req, res) => { // PATCH
     name,
     about,
   })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
@@ -74,6 +74,6 @@ module.exports.updateAvatar = (req, res) => { // PATCH
   User.findByIdAndUpdate(req.params.id, {
     avatar,
   })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };

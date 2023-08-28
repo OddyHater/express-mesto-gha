@@ -24,7 +24,7 @@ module.exports.createCard = (req, res) => { // POST
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании карточки.');
   }
   Card.create({ name, link, owner: userId })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
@@ -39,7 +39,7 @@ module.exports.deleteCard = (req, res) => { // DELETE
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
   }
   Card.findByIdAndDelete(cardId)
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
@@ -53,7 +53,7 @@ module.exports.likeCard = (req, res) => { // PUT
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
 };
 
@@ -67,6 +67,6 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
 };
