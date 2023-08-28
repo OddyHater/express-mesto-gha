@@ -3,10 +3,10 @@ const mongoose = require('mongoose');
 
 const userRoutes = require('./routes/users');
 
-const { PORT = 3000 } = process.env;
+const PORT = 3000;
 const app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/mesto', {
+mongoose.connect('mongodb://localhost:27017/users', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
