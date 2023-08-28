@@ -25,7 +25,12 @@ module.exports.createCard = (req, res) => { // POST
   }
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
+      }
+      return sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+    });
 };
 
 // eslint-disable-next-line consistent-return
