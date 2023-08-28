@@ -19,9 +19,9 @@ module.exports.findAllUsers = (req, res) => { // GET
 // eslint-disable-next-line consistent-return
 module.exports.findUserById = (req, res) => { // GET
   const { userId } = req.params;
-  User.findOne(userId)
-    .then(() => res.status(200).send({ userId }))
-    .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'Пользователь по указанному _id не найден.'));
+  User.findById(userId)
+    .then((user) => res.status(200).send({ data: user }))
+    .catch(() => sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.'));
 };
 
 // eslint-disable-next-line consistent-return
