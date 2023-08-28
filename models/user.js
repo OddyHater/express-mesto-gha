@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
     maxlength: 30,
     validate: {
       validator(v) {
-        return v && v.length >= 2;
+        return v.length >= 2;
       },
       message: 'Name must contain at least 2 characters',
     },
@@ -21,7 +21,7 @@ const userSchema = mongoose.Schema({
     maxlength: 30,
     validate: {
       validator(v) {
-        return v && v.length >= 2;
+        return v.length >= 2;
       },
       message: 'about must contain at least 2 characters',
     },

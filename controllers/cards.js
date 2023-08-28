@@ -1,5 +1,11 @@
 const Card = require('../models/card');
 
+const ERROR_CODES = {
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+};
+
 function sendError(res, statusCode, message) {
   return res.status(statusCode).json({ message });
 }
@@ -13,14 +19,14 @@ module.exports.createCard = (req, res) => { // POST
   const { name, link } = req.body;
   const userId = req.user._id;
   if (!name || !link) {
-    return sendError(res, 400, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.NOT_FOUND, 'Некорректные данные');
   }
   if (!userId) {
-    return sendError(res, 400, 'Неверные данные пользователя');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
   }
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => sendError(err, 500, 'Ошибка при создании карточки'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при создании карточки'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -28,20 +34,20 @@ module.exports.deleteCard = (req, res) => { // DELETE
   const { cardId } = req.body;
   const userId = req.user._id;
   if (!cardId) {
-    return sendError(res, 400, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
   }
   if (!userId) {
-    return sendError(res, 400, 'Неверные данные пользователя');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
   }
   Card.findByIdAndDelete(cardId)
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => sendError(err, 500, 'Ошибка при удалении карточки'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при удалении карточки'));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.likeCard = (req, res) => { // PUT
   if (!req.params.cardId) {
-    return sendError(res, 400, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -49,13 +55,13 @@ module.exports.likeCard = (req, res) => { // PUT
     { new: true },
   )
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch((err) => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: err }));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.dislikeCard = (req, res) => {
   if (!req.params.cardId) {
-    return sendError(res, 400, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -63,5 +69,5 @@ module.exports.dislikeCard = (req, res) => {
     { new: true },
   )
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch((err) => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: err }));
 };
