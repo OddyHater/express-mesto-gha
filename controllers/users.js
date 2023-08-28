@@ -26,7 +26,7 @@ module.exports.findUserById = (req, res) => { // GET
       }
       res.status(200).send({ data: user });
     })
-    .catch(() => sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.'));
+    .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'Пользователь по указанному _id не найден..'));
 };
 
 // eslint-disable-next-line consistent-return
