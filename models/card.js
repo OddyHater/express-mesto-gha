@@ -6,6 +6,12 @@ const cardSchema = mongoose.Schema({
     require: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator(v) {
+        return v && v.length >= 2;
+      },
+      message: 'name must contain at least 2 characters',
+    },
   },
 
   link: {

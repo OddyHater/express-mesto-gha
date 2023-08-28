@@ -6,6 +6,12 @@ const userSchema = mongoose.Schema({
     require: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator(v) {
+        return v && v.length >= 2;
+      },
+      message: 'Name must contain at least 2 characters',
+    },
   },
 
   about: {
@@ -13,6 +19,12 @@ const userSchema = mongoose.Schema({
     require: true,
     minlength: 2,
     maxlength: 30,
+    validate: {
+      validator(v) {
+        return v && v.length >= 2;
+      },
+      message: 'about must contain at least 2 characters',
+    },
   },
 
   avatar: {
