@@ -18,29 +18,33 @@ module.exports.findAllUsers = () => { // GET
 module.exports.findUserById = (req, res) => { // GET
   const { userId } = req.params;
   if (!userId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.');
   }
   User.findById(userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при поиске пользователя'));
+    .then((user) => res.status(201).send({ data: user }))
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.createUser = (req, res) => { // POST
   const { name, about, avatar } = req.body;
   if (!name || !about || !avatar) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
   }
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при создании пользователя'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.updateProfile = (req, res) => { // PATCH
   const { name, about } = req.body;
+  const { userId } = req.user._id;
   if (!name || !about) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при обновлении профиля.');
+  }
+  if (!userId) {
+    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь с указанным _id не найден.');
   }
   User.findByIdAndUpdate(req.params.id, {
     name,
@@ -53,12 +57,16 @@ module.exports.updateProfile = (req, res) => { // PATCH
 // eslint-disable-next-line consistent-return
 module.exports.updateAvatar = (req, res) => { // PATCH
   const { avatar } = req.body;
+  const { userId } = req.user._id;
   if (!avatar) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при обновлении аватара.');
+  }
+  if (!userId) {
+    return sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь с указанным _id не найден.');
   }
   User.findByIdAndUpdate(req.params.id, {
     avatar,
   })
     .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при аватара'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
 };

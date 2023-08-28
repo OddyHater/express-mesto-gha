@@ -11,9 +11,9 @@ const {
 } = require('../controllers/users');
 
 router.get('/users', findAllUsers);
-router.get('/users/:userId', findUserById);
 router.post('/users', createUser);
-router.post('/users/me', updateProfile);
-router.post('/users/me/avatar', updateAvatar);
+router.get('/users/:userId', findUserById);
+router.patch('/users/me', updateProfile);
+router.patch('/users/me/avatar', updateAvatar);
 
 module.exports = router;

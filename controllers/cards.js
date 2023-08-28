@@ -19,14 +19,11 @@ module.exports.createCard = (req, res) => { // POST
   const { name, link } = req.body;
   const userId = req.user._id;
   if (!name || !link) {
-    return sendError(res, ERROR_CODES.NOT_FOUND, 'Некорректные данные');
-  }
-  if (!userId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании карточки.');
   }
   Card.create({ name, link, owner: userId })
     .then((card) => res.status(201).send({ data: card }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'Ошибка при создании карточки'));
+    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, err));
 };
 
 // eslint-disable-next-line consistent-return
@@ -34,7 +31,7 @@ module.exports.deleteCard = (req, res) => { // DELETE
   const { cardId } = req.body;
   const userId = req.user._id;
   if (!cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Карточка с указанным _id не найдена.');
   }
   if (!userId) {
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
@@ -47,7 +44,7 @@ module.exports.deleteCard = (req, res) => { // DELETE
 // eslint-disable-next-line consistent-return
 module.exports.likeCard = (req, res) => { // PUT
   if (!req.params.cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки.');
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -61,7 +58,7 @@ module.exports.likeCard = (req, res) => { // PUT
 // eslint-disable-next-line consistent-return
 module.exports.dislikeCard = (req, res) => {
   if (!req.params.cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Некорректные данные');
+    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки.');
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
