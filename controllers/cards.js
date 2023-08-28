@@ -10,8 +10,10 @@ function sendError(res, statusCode, message) {
   return res.status(statusCode).json({ message });
 }
 
-module.exports.findAllCards = () => { // GET
-  Card.find();
+module.exports.findAllCards = (req, res) => { // GET
+  Card.find({})
+    .then((users) => res.send({ data: users }))
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return

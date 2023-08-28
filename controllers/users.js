@@ -10,9 +10,10 @@ function sendError(res, statusCode, message) {
   return res.status(statusCode).json({ message });
 }
 
-module.exports.findAllUsers = () => { // GET
-  const users = User.find({});
-  return users;
+module.exports.findAllUsers = (req, res) => { // GET
+  User.find({})
+    .then((users) => res.send({ data: users }))
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
@@ -34,7 +35,12 @@ module.exports.createUser = (req, res) => { // POST
   }
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
-    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
+      }
+      return sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+    });
 };
 
 // eslint-disable-next-line consistent-return
