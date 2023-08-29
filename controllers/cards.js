@@ -35,14 +35,11 @@ module.exports.createCard = (req, res) => { // POST
 
 // eslint-disable-next-line consistent-return
 module.exports.deleteCard = (req, res) => { // DELETE
-  const { cardId } = req.body;
-  if (!cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Карточка с указанным _id не найдена.');
-  }
+  const { cardId } = req.params;
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
-        sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки');
+        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
