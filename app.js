@@ -22,6 +22,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/404', (req, res, next) => {
+  res.status(404).send({ message: 'Страница не найдена' });
+
+  next();
+});
+
 app.use('/', userRoutes);
 app.use('/', cardRouter);
 

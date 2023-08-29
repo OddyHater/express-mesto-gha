@@ -43,7 +43,7 @@ module.exports.deleteCard = (req, res) => { // DELETE
       }
       res.status(200).send({ data: card });
     })
-    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
+    .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
