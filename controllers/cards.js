@@ -29,37 +29,40 @@ module.exports.createCard = (req, res) => { // POST
       if (err.name === 'ValidationError') {
         return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
       }
-      return sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+      return sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
     });
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.deleteCard = (req, res) => { // DELETE
   const { cardId } = req.body;
-  const userId = req.user._id;
   if (!cardId) {
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Карточка с указанным _id не найдена.');
   }
-  if (!userId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Неверные данные пользователя');
-  }
   Card.findByIdAndDelete(cardId)
-    .then((card) => res.status(200).send({ data: card }))
-    .catch((err) => sendError(err, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
+    .then((card) => {
+      if (!card) {
+        sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки');
+      }
+      res.status(200).send({ data: card });
+    })
+    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.likeCard = (req, res) => { // PUT
-  if (!req.params.cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки.');
-  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send({ data: card }))
-    .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .then((card) => {
+      if (!card) {
+        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
+      }
+      res.status(200).send({ data: card });
+    })
+    .catch(() => res.status(ERROR_CODES.BAD_REQUEST).send({ message: ' Переданы некорректные данные для постановки лайка.' }));
 };
 
 // eslint-disable-next-line consistent-return
@@ -72,6 +75,11 @@ module.exports.dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(200).send({ data: card }))
-    .catch(() => res.status(ERROR_CODES.INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+    .then((card) => {
+      if (!card) {
+        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
+      }
+      res.status(200).send({ data: card });
+    })
+    .catch(() => res.status(ERROR_CODES.BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка.' }));
 };
