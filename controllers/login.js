@@ -1,7 +1,3 @@
-require('dotenv').config();
-
-const { JWT_SECRET } = process.env;
-
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const LoginError = require('../errors/login-error');
@@ -14,7 +10,7 @@ module.exports.login = (req, res, next) => {
       if (!user) {
         throw LoginError('Ошибка');
       }
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+      const token = jwt.sign({ _id: user._id }, 'some-key');
 
       res.cookie('token', token, {
         maxAge: 604800,

@@ -51,8 +51,9 @@ module.exports.createUser = (req, res, next) => { // POST
     } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
+    return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
   }
+
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       User.create({
@@ -65,12 +66,15 @@ module.exports.createUser = (req, res, next) => { // POST
         .then((user) => res.status(200).send({ data: user }))
         .catch((err) => {
           if (err.name === 'ValidationError') {
-            throw new BadRequestError('Переданы некорректные данные при создании пользователя.');
-          } else if (err.status === 11000) {
-            throw new EmailError('Пользователем с таким email уже существует');
+            next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+          } else if (err.code === 11000) {
+            next(new EmailError('Пользователем с таким email уже существует'));
           }
-          next();
+          return next(err);
         });
+    })
+    .catch((err) => {
+      next(err);
     });
 };
 

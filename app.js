@@ -19,14 +19,14 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(express.json());
 
-app.post('/signin', login);
-app.post('/signup', createUser);
-
 app.use('/404', (req, res, next) => {
   res.status(404).send({ message: 'Страница не найдена' });
 
   next();
 });
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use(auth);
 
