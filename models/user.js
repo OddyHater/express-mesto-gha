@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const isEmail = require('validator/lib/isEmail');
-// const isUrl = require('validator/lib/isURL');
+const isUrl = require('validator/lib/isURL');
 
 const userSchema = mongoose.Schema({
   email: {
@@ -50,9 +50,8 @@ const userSchema = mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (value) => {
-        const urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
-        return urlPattern.test(value);
+      validator(v) {
+        return isUrl(v);
       },
       message: 'Некорректный URL для аватара',
     },

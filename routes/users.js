@@ -1,4 +1,5 @@
 const express = require('express');
+const { celebrate, Joi } = require('celebrate');
 
 const router = express.Router();
 
@@ -10,7 +11,13 @@ const {
   getCurrentUser,
 } = require('../controllers/users');
 
-router.get('/users', findAllUsers);
+const findAllUsersValidation = celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string(),
+  }),
+});
+
+router.get('/users', findAllUsersValidation, findAllUsers);
 
 router.get('/users/me', getCurrentUser);
 router.get('/users/:userId', findUserById);
