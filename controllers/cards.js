@@ -36,12 +36,17 @@ module.exports.createCard = (req, res) => { // POST
 // eslint-disable-next-line consistent-return
 module.exports.deleteCard = (req, res) => { // DELETE
   const { cardId } = req.params;
+  const userId = req.user._id;
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
         sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
       }
-      res.status(200).send({ data: card });
+      if (card.owner !== userId) {
+        res.status(401).send('Вы не можете удалить не свою карточку');
+      } else {
+        res.status(200).send({ data: card });
+      }
     })
     .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'На сервере произошла ошибка'));
 };

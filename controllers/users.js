@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const ERROR_CODES = {
@@ -19,6 +20,21 @@ module.exports.findAllUsers = (req, res) => { // GET
 // eslint-disable-next-line consistent-return
 module.exports.findUserById = (req, res) => { // GET
   const { userId } = req.params;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        sendError(res, ERROR_CODES.NOT_FOUND, 'Пользователь по указанному _id не найден.');
+      }
+      res.status(200).send({ data: user });
+    })
+    .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'Пользователь по указанному _id не найден..'));
+};
+
+// eslint-disable-next-line consistent-return
+module.exports.getCurrentUser = (req, res) => {
+  const userId = req.user._id;
+
   User.findById(userId)
     .then((user) => {
       if (!user) {
@@ -31,17 +47,34 @@ module.exports.findUserById = (req, res) => { // GET
 
 // eslint-disable-next-line consistent-return
 module.exports.createUser = (req, res) => { // POST
-  const { name, about, avatar } = req.body;
-  if (!name || !about || !avatar) {
+  const
+    {
+      email,
+      password,
+      name,
+      about,
+      avatar,
+    } = req.body;
+
+  if (!email || !password) {
     return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
   }
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
-      }
-      return sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      User.create({
+        email,
+        password: hash,
+        name,
+        about,
+        avatar,
+      })
+        .then((user) => res.status(200).send({ data: user }))
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
+          }
+          return sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+        });
     });
 };
 
