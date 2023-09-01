@@ -9,7 +9,7 @@ module.exports.login = (req, res, next) => {
   // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        throw new LoginError('Пользователем с таким email не найден');
+        return next(new LoginError('Переданы некорректные данные при создании пользователя.'));
       }
       const token = jwt.sign({ _id: user._id }, 'some-key');
 
