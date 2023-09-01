@@ -6,9 +6,10 @@ module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
+  // eslint-disable-next-line consistent-return
     .then((user) => {
       if (!user) {
-        throw LoginError('Ошибка');
+        return next(new LoginError('Пользователем с таким email не найден'));
       }
       const token = jwt.sign({ _id: user._id }, 'some-key');
 

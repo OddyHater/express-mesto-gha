@@ -12,10 +12,17 @@ const { auth } = require('./middlewares/auth');
 
 const createUserValidation = celebrate({
   body: Joi.object().keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
-    email: Joi.string().required(),
+    avatar: Joi.string().uri(),
+  }),
+});
+
+const loginValidation = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().email().required(),
     password: Joi.string().required().min(8),
   }),
 });
@@ -37,10 +44,10 @@ app.use('/404', (req, res, next) => {
   next();
 });
 
-app.post('/signin', login);
+app.post('/signin', loginValidation, login);
 app.post('/signup', createUserValidation, createUser);
 
-app.use(auth);
+// app.use(auth);
 
 app.use('/', userRoutes);
 app.use('/', cardRouter);
