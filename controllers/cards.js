@@ -1,58 +1,53 @@
 const Card = require('../models/card');
 
-const ERROR_CODES = {
-  BAD_REQUEST: 400,
-  NOT_FOUND: 404,
-  INTERNAL_SERVER_ERROR: 500,
-};
+const BadRequestError = require('../errors/bad-request-err');
+const NotFoundError = require('../errors/not-found-err');
+const LoginError = require('../errors/login-error');
 
-function sendError(res, statusCode, message) {
-  return res.status(statusCode).json({ message });
-}
-
-module.exports.findAllCards = (req, res) => { // GET
+module.exports.findAllCards = (req, res, next) => { // GET
   Card.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка'));
-};
-
-// eslint-disable-next-line consistent-return
-module.exports.createCard = (req, res) => { // POST
-  const { name, link } = req.body;
-  const userId = req.user._id;
-  if (!name || !link) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании карточки.');
-  }
-  Card.create({ name, link, owner: userId })
-    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return sendError(res, ERROR_CODES.BAD_REQUEST, 'Переданы некорректные данные при создании пользователя.');
-      }
-      return sendError(res, ERROR_CODES.INTERNAL_SERVER_ERROR, 'На сервере произошла ошибка');
+      next(err);
     });
 };
 
 // eslint-disable-next-line consistent-return
-module.exports.deleteCard = (req, res) => { // DELETE
+module.exports.createCard = (req, res, next) => { // POST
+  const { name, link } = req.body;
+  const userId = req.user._id;
+  if (!name || !link) {
+    throw new BadRequestError('Переданы некорректные данные при создании карточки.');
+  }
+  Card.create({ name, link, owner: userId })
+    .then((card) => res.status(200).send({ data: card }))
+    .catch((err) => {
+      next(err);
+    });
+};
+
+// eslint-disable-next-line consistent-return
+module.exports.deleteCard = (req, res, next) => { // DELETE
   const { cardId } = req.params;
   const userId = req.user._id;
   Card.findByIdAndDelete(cardId)
     .then((card) => {
       if (!card) {
-        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
+        throw new NotFoundError('Передан несуществующий _id карточки');
       }
       if (card.owner !== userId) {
-        res.status(401).send('Вы не можете удалить не свою карточку');
+        throw new LoginError('Вы не можете удалить не свою карточку');
       } else {
         res.status(200).send({ data: card });
       }
     })
-    .catch(() => sendError(res, ERROR_CODES.BAD_REQUEST, 'На сервере произошла ошибка'));
+    .catch((err) => {
+      next(err);
+    });
 };
 
 // eslint-disable-next-line consistent-return
-module.exports.likeCard = (req, res) => { // PUT
+module.exports.likeCard = (req, res, next) => { // PUT
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -60,17 +55,19 @@ module.exports.likeCard = (req, res) => { // PUT
   )
     .then((card) => {
       if (!card) {
-        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
+        throw new NotFoundError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
-    .catch(() => res.status(ERROR_CODES.BAD_REQUEST).send({ message: ' Переданы некорректные данные для постановки лайка.' }));
+    .catch((err) => {
+      next(err);
+    });
 };
 
 // eslint-disable-next-line consistent-return
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   if (!req.params.cardId) {
-    return sendError(res, ERROR_CODES.BAD_REQUEST, 'Передан несуществующий _id карточки.');
+    throw new BadRequestError('Передан несуществующий _id карточки.');
   }
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -79,9 +76,11 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        sendError(res, ERROR_CODES.NOT_FOUND, 'Передан несуществующий _id карточки');
+        throw new NotFoundError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
-    .catch(() => res.status(ERROR_CODES.BAD_REQUEST).send({ message: 'Переданы некорректные данные для снятия лайка.' }));
+    .catch((err) => {
+      next(err);
+    });
 };
