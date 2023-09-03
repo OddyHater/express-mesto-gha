@@ -28,13 +28,13 @@ app.use('/404', (req, res, next) => {
   next();
 });
 
+app.use(auth);
+
 app.post('/signin', loginValidation, login);
 app.post('/signup', createUserValidation, createUser);
 
 app.use('/', userRoutes);
 app.use('/', cardRouter);
-
-app.use(auth);
 
 app.use(errors());
 
