@@ -4,21 +4,17 @@ const LoginError = require('../errors/login-error');
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-  // eslint-disable-next-line consistent-return
+  User.findUserByCredentials({ email, password })
     .then((user) => {
       if (!user) {
-        throw new LoginError('Пользователем с таким email не найден');
+        throw new LoginError('Пользователь по указанному _id не найден.');
+      } else {
+        const token = jwt.sign({ _id: user._id }, 'some-key', { expiresIn: '1d' });
+        res.send({ token });
       }
-      const token = jwt.sign({ _id: user._id }, 'some-key');
-
-      res.cookie('token', token, {
-        maxAge: 604800,
-        httpOnly: true,
-      });
-
-      res.status(200).send({ message: user._id });
+    })
+    .catch(() => {
+      throw new LoginError('Неправильный логин или пароль');
     })
     .catch(next);
 };

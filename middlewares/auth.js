@@ -3,10 +3,10 @@ const AuthError = require('../errors/auth-err');
 
 // eslint-disable-next-line consistent-return
 module.exports.auth = (req, res, next) => {
-  const { authorization } = req.body;
+  const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Baerer ')) {
-    throw new AuthError('Необходимо авторизироваться');
+    throw new AuthError('Необходимо авторизироваться 1');
   }
 
   const token = authorization.replace('Baerer ', '');
@@ -15,10 +15,10 @@ module.exports.auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, 'some-key');
   } catch (err) {
-    throw new AuthError('Необходимо авторизироваться');
+    throw new AuthError('Необходимо авторизироваться 2');
   }
 
   req.user = payload;
 
-  next();
+  return next();
 };
