@@ -27,7 +27,7 @@ module.exports.findUserById = (req, res, next) => { // GET
 
 // eslint-disable-next-line consistent-return
 module.exports.getCurrentUser = (req, res, next) => {
-  const userId = req.user._id;
+  const { userId } = req.params;
 
   User.findById(userId)
     .then((user) => {
@@ -36,7 +36,9 @@ module.exports.getCurrentUser = (req, res, next) => {
       }
       res.status(200).send({ data: user });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
 
 // eslint-disable-next-line consistent-return
