@@ -31,10 +31,10 @@ app.use('/404', (req, res, next) => {
 app.post('/signin', loginValidation, login);
 app.post('/signup', createUserValidation, createUser);
 
-app.use(auth);
-
 app.use('/', userRoutes);
 app.use('/', cardRouter);
+
+app.use(auth);
 
 app.use(errors());
 
