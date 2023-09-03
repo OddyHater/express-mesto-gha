@@ -19,7 +19,7 @@ const {
 
 router.get('/users', findAllUsersValidation, findAllUsers);
 
-router.get('/users/me', getCurrentUser);
+router.get('/users/me', getCurrentUserValidataion, getCurrentUser);
 router.get('/users/:userId', findAllUsersValidation, findUserById);
 router.patch('/users/me', updateProfileValidation, updateProfile);
 router.patch('/users/me/avatar', updateAvatarValidation, updateAvatar);
