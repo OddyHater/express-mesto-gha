@@ -56,35 +56,20 @@ const createCardValidator = celebrate({
   }).unknown(),
   params: Joi.object().keys({
     user: Joi.object().keys({
-      _id: Joi.string().custom((value, helpers) => {
-        if (ObjectID.isValid(value)) {
-          return value;
-        }
-        return helpers.message('Неверный id');
-      }).required(),
+      _id: Joi.string().required(),
     }).unknown(),
   }).unknown(),
 });
 
 const deleteCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().custom((value, helpers) => {
-      if (ObjectID.isValid(value)) {
-        return value;
-      }
-      return helpers.message('Неверный id');
-    }).required(),
+    cardId: Joi.string().required(),
   }),
 });
 
 const likeCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().custom((value, helpers) => {
-      if (ObjectID.isValid(value)) {
-        return value;
-      }
-      return helpers.message('Неверный id');
-    }).required(),
+    cardId: Joi.string().required(),
   }).unknown(),
 });
 // Card Validators
