@@ -65,13 +65,23 @@ const createCardValidator = celebrate({
 
 const deleteCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required(),
+    cardId: Joi.string().required().custom((value, helper) => {
+      if (mongoose.isValidObjectId(value)) {
+        return value;
+      }
+      return helper.message('ID is not correct');
+    }),
   }),
 });
 
 const likeCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required(),
+    cardId: Joi.string().required().custom((value, helper) => {
+      if (mongoose.isValidObjectId(value)) {
+        return value;
+      }
+      return helper.message('ID is not correct');
+    }),
   }).unknown(),
 });
 // Card Validators

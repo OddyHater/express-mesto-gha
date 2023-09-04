@@ -24,8 +24,8 @@ module.exports.findUserById = (req, res, next) => { // GET
       }
       res.status(200).send({ data: user });
     })
-    .catch(() => {
-      next(new BadRequestError('Пользователь по указанному _id не найден.'));
+    .catch((err) => {
+      next(err);
     });
 };
 

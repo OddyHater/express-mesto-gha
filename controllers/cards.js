@@ -47,12 +47,14 @@ module.exports.deleteCard = (req, res, next) => { // DELETE
 
 // eslint-disable-next-line consistent-return
 module.exports.likeCard = (req, res, next) => { // PUT
-  const { cardId } = req.params.cardId;
-
-  Card.findByIdAndUpdate(cardId)
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => {
       if (!card) {
-        throw new BadRequestError('Передан несуществующий _id карточки');
+        throw new NotFoundError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
@@ -63,14 +65,18 @@ module.exports.likeCard = (req, res, next) => { // PUT
 
 // eslint-disable-next-line consistent-return
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId)
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
-    .catch(() => {
-      next(new BadRequestError('Передан несуществующий _id карточки'));
+    .catch((err) => {
+      next(err);
     });
 };
