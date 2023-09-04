@@ -32,12 +32,13 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        throw new BadRequestError({ message: req.params });
+        console.log(1);
+        throw new BadRequestError('Пользователь по указанному _id не найден.');
       }
       res.status(200).send({ user });
     })
     .catch(() => {
-      next();
+      next(new BadRequestError('Пользователь по указанному _id не найден.'));
     });
 };
 

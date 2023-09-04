@@ -1,5 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 
+const linkPattern = /(https?:\/\/)(w{3}\.)?\w+[-.~:/?#[\]@!$&'()*+,;=]*#?/;
+
 // User validators
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
@@ -22,7 +24,7 @@ const updateProfileValidation = celebrate({
 
 const updateAvatarValidation = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.link(),
+    avatar: Joi.string().required().pattern(linkPattern),
   }).unknown(),
 });
 
@@ -32,7 +34,7 @@ const createUserValidation = celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().required().pattern(linkPattern),
   }).unknown(),
 });
 // User validators
@@ -41,7 +43,7 @@ const createUserValidation = celebrate({
 const createCardValidator = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().uri(),
+    link: Joi.string().required().pattern(linkPattern),
   }).unknown(),
   params: Joi.object().keys({
     user: Joi.object().keys({
