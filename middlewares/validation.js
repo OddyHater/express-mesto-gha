@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { celebrate, Joi } = require('celebrate');
 
 const linkPattern = /(https?:\/\/)(w{3}\.)?\w+[-.~:/?#[\]@!$&'()*+,;=]*#?/;
@@ -5,13 +6,23 @@ const linkPattern = /(https?:\/\/)(w{3}\.)?\w+[-.~:/?#[\]@!$&'()*+,;=]*#?/;
 // User validators
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string(),
+    userId: Joi.string().custom((value, helper) => {
+      if (mongoose.isValidObjectId(value)) {
+        return value;
+      }
+      return helper.message('ID is not correct');
+    }),
   }).unknown(),
 });
 
 const getCurrentUserValidataion = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string(),
+    userId: Joi.string().custom((value, helper) => {
+      if (mongoose.isValidObjectId(value)) {
+        return value;
+      }
+      return helper.message('ID is not correct');
+    }),
   }).unknown(),
 });
 

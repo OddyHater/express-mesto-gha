@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const BadRequestError = require('../errors/bad-request-err');
-// const NotFoundError = require('../errors/not-found-err');
+const NotFoundError = require('../errors/not-found-err');
 const EmailError = require('../errors/email-err');
 
 module.exports.findAllUsers = (req, res, next) => { // GET
@@ -19,6 +19,9 @@ module.exports.findUserById = (req, res, next) => { // GET
 
   User.findById(userId)
     .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь по указанному _id не найден.');
+      }
       res.status(200).send({ data: user });
     })
     .catch(() => {
