@@ -3,7 +3,7 @@ const { celebrate, Joi } = require('celebrate');
 // User validators
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    userId: Joi.string(),
   }).unknown(),
 });
 

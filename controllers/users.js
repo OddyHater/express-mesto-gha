@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const BadRequestError = require('../errors/bad-request-err');
+// const NotFoundError = require('../errors/not-found-err');
 const EmailError = require('../errors/email-err');
 
 module.exports.findAllUsers = (req, res, next) => { // GET
@@ -28,12 +29,17 @@ module.exports.findUserById = (req, res, next) => { // GET
 // eslint-disable-next-line consistent-return
 module.exports.getCurrentUser = (req, res, next) => {
   const { userId } = req.params;
+  console.log(userId);
   User.findById(userId)
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        console.log(req.params);
+        throw new BadRequestError({ message: req.params });
+      }
+      res.status(200).send({ user });
     })
     .catch(() => {
-      next(new BadRequestError('Пользователь по указанному _id не найден.'));
+      next();
     });
 };
 
