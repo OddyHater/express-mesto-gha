@@ -2,7 +2,7 @@ const Card = require('../models/card');
 
 const BadRequestError = require('../errors/bad-request-err');
 const NotFoundError = require('../errors/not-found-err');
-const LoginError = require('../errors/login-error');
+const DeleteCardError = require('../errors/delete-card-err');
 
 module.exports.findAllCards = (req, res, next) => { // GET
   Card.find({})
@@ -36,7 +36,7 @@ module.exports.deleteCard = (req, res, next) => { // DELETE
         throw new NotFoundError('Передан несуществующий _id карточки');
       }
       if (card.owner !== userId) {
-        throw new LoginError('Вы не можете удалить не свою карточку');
+        throw new DeleteCardError('Вы не можете удалить не свою карточку');
       } else {
         res.status(200).send({ data: card });
       }
