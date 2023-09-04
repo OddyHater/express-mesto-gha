@@ -28,11 +28,10 @@ module.exports.findUserById = (req, res, next) => { // GET
 
 // eslint-disable-next-line consistent-return
 module.exports.getCurrentUser = (req, res, next) => {
-  const { userId } = req.params;
-  User.findById(userId)
+  const { _id } = req.user;
+  User.findById(_id)
     .then((user) => {
       if (!user) {
-        console.log(1);
         throw new BadRequestError('Пользователь по указанному _id не найден.');
       }
       res.status(200).send({ user });
