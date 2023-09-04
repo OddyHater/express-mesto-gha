@@ -9,7 +9,7 @@ const cardRouter = require('./routes/cards');
 
 const { createUser } = require('./controllers/users');
 const { login } = require('./controllers/login');
-const { auth } = require('./middlewares/auth');
+// const { auth } = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -31,7 +31,7 @@ app.use('/404', (req, res, next) => {
 app.post('/signin', loginValidation, login);
 app.post('/signup', createUserValidation, createUser);
 
-app.use(auth);
+// app.use(auth);
 
 app.use('/', userRoutes);
 app.use('/', cardRouter);

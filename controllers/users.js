@@ -2,13 +2,14 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 const BadRequestError = require('../errors/bad-request-err');
-const NotFoundError = require('../errors/not-found-err');
 const EmailError = require('../errors/email-err');
 
 module.exports.findAllUsers = (req, res, next) => { // GET
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(next);
+    .catch(() => {
+      next(new BadRequestError('Пользователь по указанному _id не найден.'));
+    });
 };
 
 // eslint-disable-next-line consistent-return
@@ -17,12 +18,11 @@ module.exports.findUserById = (req, res, next) => { // GET
 
   User.findById(userId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
-      }
       res.status(200).send({ data: user });
     })
-    .catch(next);
+    .catch(() => {
+      next(new BadRequestError('Пользователь по указанному _id не найден.'));
+    });
 };
 
 // eslint-disable-next-line consistent-return
@@ -30,13 +30,10 @@ module.exports.getCurrentUser = (req, res, next) => {
   const { userId } = req.params;
   User.findById(userId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
-      }
       res.status(200).send({ data: user });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new BadRequestError('Пользователь по указанному _id не найден.'));
     });
 };
 
@@ -105,11 +102,14 @@ module.exports.updateAvatar = (req, res, next) => { // PATCH
   if (!avatar) {
     throw new BadRequestError('Переданы некорректные данные при обновлении аватара.');
   }
+
   User.findByIdAndUpdate(
-    req.params.id,
+    req.params.userId,
     { avatar },
     { new: true, runValidators: true },
   )
     .then(() => res.status(200).send({ avatar }))
-    .catch(next);
+    .catch(() => {
+      next(new BadRequestError('Пользователь по указанному _id не найден.'));
+    });
 };

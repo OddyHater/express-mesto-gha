@@ -16,6 +16,7 @@ module.exports.findAllCards = (req, res, next) => { // GET
 module.exports.createCard = (req, res, next) => { // POST
   const { name, link } = req.body;
   const userId = req.user._id;
+
   if (!name || !link) {
     throw new BadRequestError('Переданы некорректные данные при создании карточки.');
   }
@@ -30,32 +31,28 @@ module.exports.createCard = (req, res, next) => { // POST
 module.exports.deleteCard = (req, res, next) => { // DELETE
   const { cardId } = req.params;
   const userId = req.user._id;
+
   Card.findByIdAndDelete(cardId)
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Передан несуществующий _id карточки');
-      }
       if (card.owner !== userId) {
         throw new DeleteCardError('Вы не можете удалить не свою карточку');
       } else {
         res.status(200).send({ data: card });
       }
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new NotFoundError('Передан несуществующий _id карточки'));
     });
 };
 
 // eslint-disable-next-line consistent-return
 module.exports.likeCard = (req, res, next) => { // PUT
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
+  const { cardId } = req.params.cardId;
+
+  Card.findByIdAndUpdate(cardId)
     .then((card) => {
       if (!card) {
-        throw new NotFoundError('Передан несуществующий _id карточки');
+        throw new BadRequestError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
@@ -66,21 +63,14 @@ module.exports.likeCard = (req, res, next) => { // PUT
 
 // eslint-disable-next-line consistent-return
 module.exports.dislikeCard = (req, res, next) => {
-  if (!req.params.cardId) {
-    throw new BadRequestError('Передан несуществующий _id карточки.');
-  }
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
+  Card.findByIdAndUpdate(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий _id карточки');
       }
       res.status(200).send({ data: card });
     })
-    .catch((err) => {
-      next(err);
+    .catch(() => {
+      next(new BadRequestError('Передан несуществующий _id карточки'));
     });
 };
