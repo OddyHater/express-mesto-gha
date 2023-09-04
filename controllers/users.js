@@ -29,11 +29,9 @@ module.exports.findUserById = (req, res, next) => { // GET
 // eslint-disable-next-line consistent-return
 module.exports.getCurrentUser = (req, res, next) => {
   const { userId } = req.params;
-  console.log(userId);
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        console.log(req.params);
         throw new BadRequestError({ message: req.params });
       }
       res.status(200).send({ user });

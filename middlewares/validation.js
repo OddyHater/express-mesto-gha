@@ -1,26 +1,15 @@
 const { celebrate, Joi } = require('celebrate');
-const { ObjectID } = require('mongoose').Types;
 
 // User validators
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().custom((value, helpers) => {
-      if (ObjectID.isValid(value)) {
-        return value;
-      }
-      return helpers.message('Неверный id');
-    }),
+    userId: Joi.string(),
   }).unknown(),
 });
 
 const getCurrentUserValidataion = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().custom((value, helpers) => {
-      if (ObjectID.isValid(value)) {
-        return value;
-      }
-      return helpers.message('Неверный id');
-    }),
+    userId: Joi.string(),
   }).unknown(),
 });
 
