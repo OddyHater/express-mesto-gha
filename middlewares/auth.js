@@ -3,6 +3,7 @@ const AuthError = require('../errors/auth-err');
 
 // eslint-disable-next-line consistent-return
 module.exports.auth = (req, res, next) => {
+  console.log(req.headers);
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Baerer ')) {
