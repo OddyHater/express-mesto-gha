@@ -4,13 +4,13 @@ const { celebrate, Joi } = require('celebrate');
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
     userId: Joi.string(),
-  }),
+  }).unknown(),
 });
 
 const getCurrentUserValidataion = celebrate({
   params: Joi.object().keys({
     userId: Joi.string(),
-  }),
+  }).unknown(),
 });
 
 const updateProfileValidation = celebrate({
@@ -20,7 +20,7 @@ const updateProfileValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
-  }),
+  }).unknown(),
 });
 
 const updateAvatarValidation = celebrate({
@@ -29,7 +29,7 @@ const updateAvatarValidation = celebrate({
   }),
   body: Joi.object().keys({
     avatar: Joi.link(),
-  }),
+  }).unknown(),
 });
 
 const createUserValidation = celebrate({
@@ -39,16 +39,16 @@ const createUserValidation = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().uri(),
-  }),
+  }).unknown(),
 });
 // User validators
 
 // Card Validators
 const createCardValidator = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required(),
-    link: Joi.string().uri(),
-  }),
+    name: Joi.string().required().min(2).max(30),
+    link: Joi.string().required().uri(),
+  }).unknown(),
   params: Joi.object().keys({
     user: Joi.object().keys({
       _id: Joi.string().required(),
@@ -58,13 +58,13 @@ const createCardValidator = celebrate({
 
 const deleteCardValidator = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    cardId: Joi.string().required(),
   }),
 });
 
 const likeCardValidator = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().required(),
+    cardId: Joi.string().required(),
   }).unknown(),
 });
 // Card Validators
