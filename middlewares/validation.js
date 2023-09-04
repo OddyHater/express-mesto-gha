@@ -1,15 +1,26 @@
 const { celebrate, Joi } = require('celebrate');
+const { ObjectID } = require('mongoose').Types;
 
 // User validators
 const findAllUsersValidation = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string(),
+    userId: Joi.string().custom((value, helpers) => {
+      if (ObjectID.isValid(value)) {
+        return value;
+      }
+      return helpers.message('Неверный id');
+    }),
   }).unknown(),
 });
 
 const getCurrentUserValidataion = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string(),
+    userId: Joi.string().custom((value, helpers) => {
+      if (ObjectID.isValid(value)) {
+        return value;
+      }
+      return helpers.message('Неверный id');
+    }),
   }).unknown(),
 });
 
@@ -45,20 +56,35 @@ const createCardValidator = celebrate({
   }).unknown(),
   params: Joi.object().keys({
     user: Joi.object().keys({
-      _id: Joi.string().required(),
+      _id: Joi.string().custom((value, helpers) => {
+        if (ObjectID.isValid(value)) {
+          return value;
+        }
+        return helpers.message('Неверный id');
+      }).required(),
     }).unknown(),
   }).unknown(),
 });
 
 const deleteCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required(),
+    cardId: Joi.string().custom((value, helpers) => {
+      if (ObjectID.isValid(value)) {
+        return value;
+      }
+      return helpers.message('Неверный id');
+    }).required(),
   }),
 });
 
 const likeCardValidator = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().required(),
+    cardId: Joi.string().custom((value, helpers) => {
+      if (ObjectID.isValid(value)) {
+        return value;
+      }
+      return helpers.message('Неверный id');
+    }).required(),
   }).unknown(),
 });
 // Card Validators
