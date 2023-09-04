@@ -34,14 +34,14 @@ module.exports.deleteCard = (req, res, next) => { // DELETE
 
   Card.findByIdAndDelete(cardId)
     .then((card) => {
-      if (card.owner !== userId) {
+      if (card.owner._id.toString() !== userId) {
         throw new DeleteCardError('Вы не можете удалить не свою карточку');
       } else {
         res.status(200).send({ data: card });
       }
     })
-    .catch(() => {
-      next(new NotFoundError('Передан несуществующий _id карточки'));
+    .catch((err) => {
+      next(err);
     });
 };
 
